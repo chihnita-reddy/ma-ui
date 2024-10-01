@@ -1,0 +1,49 @@
+trigger: none
+schedules:
+  - cron: "30 03 01 */3 *"
+    displayName: Runs at 3:30 AM on every 1st day of quarter
+    branches:
+      include:
+        - master
+    always: true
+
+parameters:
+  - name: sast
+    displayName: Run SAST Scan
+    type: boolean
+    default: true
+
+jobs:
+- job: SAST
+  pool: Fortify-bld-pool
+  condition: eq('${{ parameters.sast }}', true)
+  steps:
+  - task: JoeJulik.install-node-and-npm-task.custom-build-release-task.NodeAndNpmTool@1
+    displayName: 'Use Node 10.x'
+    inputs:
+        versionSpec: 10.x
+  - task: Npm@1
+    displayName: 'npm ci'
+    inputs:
+        command: ci
+        verbose: false
+  - task: FortifyOnDemandStatic@8
+    displayName: Trigger Fortify SAST Scan
+    inputs:
+      FortifyProjects: '$(Build.SourcesDirectory)'
+      FodConnection: 'Fortify SAST (FoD) Scans-AOS'
+      ReleaseOptions: '0'
+      ReleaseId: 783238
+      EntitlementSelection: '1'
+      EntitlementPreference: '1'
+      OverrideScanSettings: '2'
+      InProgressScanActionType: '2'
+      RemediationScanPreference: '0'
+      PolicyFailAction: '0'
+  - task: DeleteFiles@1
+    displayName: 'Delete files from $(Agent.BuildDirectory)'
+    inputs:
+      SourceFolder: '$(Agent.BuildDirectory)'
+      Contents: |
+        /a/source.zip
+    condition: succeededOrFailed()

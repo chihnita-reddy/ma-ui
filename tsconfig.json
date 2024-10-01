@@ -1,0 +1,35 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "downlevelIteration": true,
+    "outDir": "./dist/out-tsc",
+    "baseUrl": "src",
+    "paths": {
+      "~/*": ["app/*"],
+      "~auth/*": [ "app/auth/*" ],
+      "~core/*": [ "app/core/*" ],
+      "~shared/*" : [ "app/shared/*" ],
+      "~main/*": ["app/main/*"],
+      "~environment": [ "environments/environment"]
+    },
+    "sourceMap": true,
+    "declaration": false,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "noUnusedLocals": true,
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true,
+    // TODO: Remove skipLibCheck when Angular is upgraded and supports TS3.
+    "skipLibCheck": true,
+    "target": "es2015",
+    "typeRoots": [
+      "node_modules/@types"
+    ],
+    "lib": [
+      "es2016",
+      "dom"
+    ]
+  }
+}
